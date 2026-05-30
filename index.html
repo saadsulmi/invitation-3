@@ -18,6 +18,11 @@
     --text-dark: #2C2416;
     --text-mid: #5C4A2A;
     --text-light: #9C8660;
+
+    /* ── Unified card dimensions ── */
+    --card-width: min(560px, 92vw);
+    --card-padding: 56px 48px;
+    --card-shadow: 0 0 0 8px var(--white), 0 0 0 9px var(--gold-light), 0 8px 60px rgba(201,168,76,0.10);
   }
 
   html { scroll-behavior: smooth; scroll-padding-top: 0; }
@@ -50,7 +55,7 @@
   }
 
   .cover-inner {
-    width: min(480px, 90vw);
+    width: var(--card-width);
     min-height: min(680px, 92vh);
     background: var(--white);
     border: 1px solid var(--gold-light);
@@ -59,9 +64,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 48px 40px;
+    padding: var(--card-padding);
     text-align: center;
-    box-shadow: 0 0 0 8px var(--white), 0 0 0 9px var(--gold-light), 0 8px 60px rgba(201,168,76,0.12);
+    box-shadow: var(--card-shadow);
   }
 
   .corner-ornament {
@@ -183,11 +188,11 @@
   }
 
   .hero-card {
-    width: min(540px, 94vw);
+    width: var(--card-width);
     background: var(--white);
     border: 1px solid var(--gold-light);
-    box-shadow: 0 0 0 8px var(--white), 0 0 0 9px var(--gold-light);
-    padding: 60px 48px;
+    box-shadow: var(--card-shadow);
+    padding: var(--card-padding);
     text-align: center;
     position: relative;
     animation: cardReveal 1.2s ease both;
@@ -378,16 +383,16 @@
   }
 
   .details-wrapper {
-    width: min(700px, 94vw);
+    width: var(--card-width);
     text-align: center;
   }
 
   .details-card {
     border: 1px solid var(--gold-light);
-    padding: 56px 48px;
+    padding: var(--card-padding);
     position: relative;
     margin-top: 40px;
-    box-shadow: 0 0 0 8px var(--white), 0 0 0 9px var(--gold-light);
+    box-shadow: var(--card-shadow);
   }
 
   .details-grid {
@@ -436,12 +441,12 @@
   }
 
   .directions-card {
-    width: min(640px, 94vw);
+    width: var(--card-width);
     border: 1px solid var(--gold-light);
     background: var(--white);
-    padding: 56px 48px;
+    padding: var(--card-padding);
     text-align: center;
-    box-shadow: 0 4px 40px rgba(201,168,76,0.1);
+    box-shadow: var(--card-shadow);
   }
 
   .directions-steps {
@@ -518,7 +523,7 @@
   }
 
   .quotes-wrapper {
-    width: min(640px, 94vw);
+    width: var(--card-width);
     text-align: center;
   }
 
@@ -592,12 +597,12 @@
   }
 
   .closing-card {
-    width: min(520px, 94vw);
+    width: var(--card-width);
     border: 1px solid var(--gold-light);
     background: var(--white);
-    padding: 64px 48px;
+    padding: var(--card-padding);
     text-align: center;
-    box-shadow: 0 0 0 8px var(--white), 0 0 0 9px var(--gold-light), 0 8px 60px rgba(201,168,76,0.12);
+    box-shadow: var(--card-shadow);
     position: relative;
   }
 
@@ -710,10 +715,10 @@
 
     /* Cover */
     .cover-inner {
-      padding: 32px 22px;
+      padding: 44px 28px;
       min-height: 92dvh;
       min-height: 92vh;
-      width: 94vw;
+      width: 92vw;
     }
     .cover-names { font-size: clamp(46px, 14vw, 64px); }
     .cover-ampersand { font-size: clamp(32px, 11vw, 46px); }
@@ -721,8 +726,8 @@
 
     /* Hero */
     .hero-card {
-      width: 100%;
-      padding: 36px 22px 32px;
+      width: 92vw;
+      padding: 44px 28px;
       box-shadow: 0 0 0 6px var(--white), 0 0 0 7px var(--gold-light);
     }
     .hero-date-block { gap: 0 16px; }
@@ -842,10 +847,11 @@
 
     /* Details */
     #details { padding: 52px 16px; }
-    .details-wrapper { width: 100%; }
+    .details-wrapper { width: 92vw; }
     .details-card {
-      padding: 32px 20px;
-      box-shadow: 0 0 0 5px var(--white), 0 0 0 6px var(--gold-light);
+      width: 92vw;
+      padding: 44px 28px;
+      box-shadow: 0 0 0 6px var(--white), 0 0 0 7px var(--gold-light);
       margin-top: 28px;
     }
     .details-grid { grid-template-columns: 1fr; gap: 24px; }
@@ -853,12 +859,16 @@
 
     /* Directions */
     #directions { padding: 52px 16px; }
-    .directions-card { padding: 32px 20px; width: 100%; }
+    .directions-card {
+      padding: 44px 28px;
+      width: 92vw;
+      box-shadow: 0 0 0 6px var(--white), 0 0 0 7px var(--gold-light);
+    }
     .dir-step { gap: 12px; }
 
     /* Quotes */
     #quotes { padding: 52px 20px; }
-    .quotes-wrapper { width: 100%; }
+    .quotes-wrapper { width: 92vw; }
     .quote-carousel { min-height: 210px; margin: 36px 0; }
     .quote-text { font-size: 17px; line-height: 1.65; }
     .quote-mark { font-size: 56px; }
@@ -866,9 +876,9 @@
     /* Closing */
     #closing { padding: 52px 16px; }
     .closing-card {
-      padding: 44px 22px;
-      width: 100%;
-      box-shadow: 0 0 0 5px var(--white), 0 0 0 6px var(--gold-light);
+      padding: 44px 28px;
+      width: 92vw;
+      box-shadow: 0 0 0 6px var(--white), 0 0 0 7px var(--gold-light);
     }
     .closing-main { font-size: clamp(36px, 10vw, 50px); }
 
@@ -881,8 +891,11 @@
   }
 
   @media (max-width: 380px) {
-    .hero-card, .details-card, .directions-card, .closing-card { padding: 28px 16px; }
-    .cover-inner { padding: 28px 16px; }
+    .cover-inner,
+    .hero-card,
+    .details-card,
+    .directions-card,
+    .closing-card { padding: 36px 20px; width: 94vw; }
     .filmstrip-slide { flex: 0 0 86vw; height: 76vw; }
     .filmstrip-slide:first-child { margin-left: 7vw; }
     .filmstrip-slide:last-child  { margin-right: 7vw; }
@@ -1080,12 +1093,12 @@
             <span class="d-main">11:00 AM</span>
             <span class="d-sub">Doors open at 10:00 AM</span>
           </div>
-          <!-- <div class="detail-vline"></div> -->
-          <!-- <div class="detail-col">
+          <!-- <div class="detail-vline"></div>
+          <div class="detail-col">
             <span class="icon">🥂</span>
             <span class="d-label">Reception</span>
             <span class="d-main">12:00 PM</span>
-            <span class="d-sub">Lunch & dancing to follow</span>
+            <span class="d-sub">Dinner & dancing to follow</span>
           </div> -->
         </div>
 
