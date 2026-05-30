@@ -281,63 +281,95 @@
 
   /* ── PHOTOS SECTION ── */
   #photos {
-    background: var(--gold-pale);
-    padding: 80px 24px;
+    background: #1a1410;
+    padding: 80px 0;
+    overflow: hidden;
+    position: relative;
+    min-height: 100vh;
+    justify-content: center;
+  }
+
+  #photos::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 50%, rgba(201,168,76,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 50%, rgba(201,168,76,0.05) 0%, transparent 70%);
+    pointer-events: none;
   }
 
   .photos-header {
     text-align: center;
     margin-bottom: 48px;
+    padding: 0 24px;
   }
+  .photos-header .section-pre { color: var(--gold-light); opacity: 0.8; }
+  .photos-header .section-title { color: #f5ead6; }
 
+  /* Desktop mosaic */
   .photos-grid {
-    width: min(900px, 96vw);
+    width: min(960px, 96vw);
+    margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: auto auto;
-    gap: 12px;
+    grid-template-rows: 280px 320px;
+    gap: 6px;
   }
 
   .photo-frame {
     overflow: hidden;
     position: relative;
+    border-radius: 2px;
   }
+
   .photo-frame::after {
     content: '';
     position: absolute;
     inset: 0;
-    border: 1px solid rgba(201,168,76,0.25);
+    border: 1px solid rgba(201,168,76,0);
+    transition: border-color 0.5s ease;
     pointer-events: none;
+    z-index: 2;
   }
+  .photo-frame:hover::after { border-color: rgba(201,168,76,0.55); }
 
   .photo-frame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.7s ease;
-    filter: sepia(8%) saturate(90%) brightness(1.02);
+    transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94), filter 0.6s ease;
+    filter: sepia(15%) saturate(85%) brightness(0.88);
   }
-  .photo-frame:hover img { transform: scale(1.04); }
+  .photo-frame:hover img {
+    transform: scale(1.06);
+    filter: sepia(5%) saturate(105%) brightness(1.0);
+  }
 
-  .pf-1 { grid-column: 1 / 5; grid-row: 1; height: 280px; }
-  .pf-2 { grid-column: 5 / 9; grid-row: 1; height: 280px; }
-  .pf-3 { grid-column: 9 / 13; grid-row: 1; height: 280px; }
-  .pf-4 { grid-column: 1 / 7; grid-row: 2; height: 320px; }
-  .pf-5 { grid-column: 7 / 13; grid-row: 2; height: 320px; }
+  .pf-1 { grid-column: 1 / 5; grid-row: 1; }
+  .pf-2 { grid-column: 5 / 9; grid-row: 1; }
+  .pf-3 { grid-column: 9 / 13; grid-row: 1; }
+  .pf-4 { grid-column: 1 / 7; grid-row: 2; }
+  .pf-5 { grid-column: 7 / 13; grid-row: 2; }
 
   .photo-caption {
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, rgba(44,36,22,0.6), transparent);
-    padding: 24px 16px 14px;
+    background: linear-gradient(to top, rgba(15,10,5,0.85) 0%, transparent 100%);
+    padding: 40px 20px 16px;
     font-family: 'Great Vibes', cursive;
-    font-size: 18px;
-    color: rgba(255,255,255,0.92);
+    font-size: 22px;
+    color: rgba(248,235,195,0.95);
     opacity: 0;
-    transition: opacity 0.4s;
+    transform: translateY(6px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    z-index: 3;
   }
-  .photo-frame:hover .photo-caption { opacity: 1; }
+  .photo-frame:hover .photo-caption { opacity: 1; transform: translateY(0); }
+
+  /* ── MOBILE FILMSTRIP ── */
+  .photos-filmstrip { display: none; }
 
   /* ── DATE & DETAILS SECTION ── */
   #details {
@@ -658,51 +690,202 @@
   #musicBtn.playing svg { animation: musicSpin 4s linear infinite; }
   @keyframes musicSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-  /* ── MOBILE RESPONSIVENESS ── */
+  /* ══════════════════════════════════════
+     MOBILE — every section 100vh, proper
+     ══════════════════════════════════════ */
   @media (max-width: 600px) {
-    section { padding: 60px 16px; min-height: auto; }
 
-    .cover-inner { padding: 32px 20px; min-height: 88vh; }
-    .cover-names { font-size: clamp(44px, 13vw, 64px); }
-    .cover-ampersand { font-size: clamp(30px, 10vw, 44px); }
-    .corner-ornament { width: 44px; height: 44px; }
+    /* All sections: 100dvh (falls back to 100vh), centred, no overflow */
+    section {
+      min-height: 100dvh;
+      min-height: 100vh;
+      height: auto;
+      padding: 56px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
 
-    .hero-card { padding: 36px 22px; width: min(100%, 96vw); }
-    .hero-date-block { gap: 0 12px; }
-    .hero-quote { font-size: 15px; }
+    /* Cover */
+    .cover-inner {
+      padding: 32px 22px;
+      min-height: 92dvh;
+      min-height: 92vh;
+      width: 94vw;
+    }
+    .cover-names { font-size: clamp(46px, 14vw, 64px); }
+    .cover-ampersand { font-size: clamp(32px, 11vw, 46px); }
+    .corner-ornament { width: 42px; height: 42px; }
 
-    .photos-grid { gap: 8px; }
-    .pf-1, .pf-2, .pf-3 { grid-column: span 12; height: 180px; }
-    .pf-4, .pf-5 { grid-column: span 12; height: 210px; }
-    .photo-caption { opacity: 1; font-size: 15px; }
+    /* Hero */
+    .hero-card {
+      width: 100%;
+      padding: 36px 22px 32px;
+      box-shadow: 0 0 0 6px var(--white), 0 0 0 7px var(--gold-light);
+    }
+    .hero-date-block { gap: 0 16px; }
+    .hero-quote { font-size: 15px; line-height: 1.7; }
 
-    .details-card { padding: 36px 20px; }
+    /* ── PHOTOS: hide grid, show filmstrip ── */
+    #photos {
+      padding: 56px 0;
+      justify-content: flex-start;
+    }
+    .photos-header { margin-bottom: 32px; }
+    .photos-grid { display: none; }
+    .photos-filmstrip {
+      display: block;
+      width: 100%;
+      position: relative;
+    }
+
+    /* Horizontal snap scroll strip */
+    .filmstrip-track {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 0 20px;
+      gap: 12px;
+    }
+    .filmstrip-track::-webkit-scrollbar { display: none; }
+
+    .filmstrip-slide {
+      flex: 0 0 80vw;
+      height: 72vw;
+      max-height: 320px;
+      scroll-snap-align: center;
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    /* First and last get a little peek effect */
+    .filmstrip-slide:first-child { margin-left: 10vw; }
+    .filmstrip-slide:last-child  { margin-right: 10vw; }
+
+    .filmstrip-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: sepia(12%) saturate(88%) brightness(0.9);
+      transition: filter 0.4s;
+    }
+    .filmstrip-slide.is-active img {
+      filter: sepia(4%) saturate(102%) brightness(1.0);
+    }
+
+    /* Gold border on active slide */
+    .filmstrip-slide::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 2px solid rgba(201,168,76,0);
+      border-radius: 4px;
+      transition: border-color 0.4s;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .filmstrip-slide.is-active::after { border-color: rgba(201,168,76,0.7); }
+
+    .filmstrip-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(10,7,3,0.88) 0%, transparent 100%);
+      padding: 40px 16px 14px;
+      font-family: 'Great Vibes', cursive;
+      font-size: 24px;
+      color: rgba(248,235,195,0.95);
+      z-index: 3;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    .filmstrip-slide.is-active .filmstrip-caption {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Dot indicators */
+    .filmstrip-dots {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 20px;
+    }
+    .filmstrip-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(201,168,76,0.3);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .filmstrip-dot.active {
+      background: var(--gold);
+      transform: scale(1.4);
+    }
+
+    /* Swipe hint arrow */
+    .filmstrip-hint {
+      text-align: center;
+      margin-top: 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 8.5px;
+      letter-spacing: 0.3em;
+      color: rgba(201,168,76,0.45);
+      text-transform: uppercase;
+    }
+
+    /* Details */
+    #details { padding: 52px 16px; }
+    .details-wrapper { width: 100%; }
+    .details-card {
+      padding: 32px 20px;
+      box-shadow: 0 0 0 5px var(--white), 0 0 0 6px var(--gold-light);
+      margin-top: 28px;
+    }
     .details-grid { grid-template-columns: 1fr; gap: 24px; }
     .detail-vline { display: none; }
-    .details-wrapper { width: 100%; }
 
-    .directions-card { padding: 36px 20px; width: 100%; }
+    /* Directions */
+    #directions { padding: 52px 16px; }
+    .directions-card { padding: 32px 20px; width: 100%; }
     .dir-step { gap: 12px; }
 
+    /* Quotes */
+    #quotes { padding: 52px 20px; }
     .quotes-wrapper { width: 100%; }
-    .quote-carousel { min-height: 200px; }
-    .quote-text { font-size: 17px; }
-    .quote-mark { font-size: 60px; }
+    .quote-carousel { min-height: 210px; margin: 36px 0; }
+    .quote-text { font-size: 17px; line-height: 1.65; }
+    .quote-mark { font-size: 56px; }
 
-    .closing-card { padding: 48px 24px; width: 100%; }
-    .closing-main { font-size: clamp(34px, 9vw, 48px); }
+    /* Closing */
+    #closing { padding: 52px 16px; }
+    .closing-card {
+      padding: 44px 22px;
+      width: 100%;
+      box-shadow: 0 0 0 5px var(--white), 0 0 0 6px var(--gold-light);
+    }
+    .closing-main { font-size: clamp(36px, 10vw, 50px); }
 
-    .section-title { font-size: clamp(38px, 10vw, 56px); }
+    /* Shared text tweaks */
+    .section-title { font-size: clamp(40px, 11vw, 58px); }
+    .ornament-line::before, .ornament-line::after { width: 36px; }
 
+    /* Music btn */
     #musicBtn { bottom: 16px; right: 16px; width: 40px; height: 40px; }
-
-    .ornament-line::before, .ornament-line::after { width: 40px; }
   }
 
   @media (max-width: 380px) {
+    .hero-card, .details-card, .directions-card, .closing-card { padding: 28px 16px; }
     .cover-inner { padding: 28px 16px; }
-    .hero-card { padding: 28px 16px; }
-    .details-card, .directions-card, .closing-card { padding: 28px 16px; }
+    .filmstrip-slide { flex: 0 0 86vw; height: 76vw; }
+    .filmstrip-slide:first-child { margin-left: 7vw; }
+    .filmstrip-slide:last-child  { margin-right: 7vw; }
   }
 </style>
 </head>
@@ -836,9 +1019,41 @@
         <div class="photo-caption">Forever begins here</div>
       </div>
     </div>
-  </section>
 
-  <!-- DATE & DETAILS -->
+    <!-- Mobile filmstrip (hidden on desktop, shown on mobile via CSS) -->
+    <div class="photos-filmstrip reveal">
+      <div class="filmstrip-track" id="filmstripTrack">
+        <div class="filmstrip-slide">
+          <img src="./glance.jpg" alt="First glance">
+          <div class="filmstrip-caption">First glance</div>
+        </div>
+        <div class="filmstrip-slide">
+          <img src="./golden.jpg" alt="Golden hour">
+          <div class="filmstrip-caption">Golden hour</div>
+        </div>
+        <div class="filmstrip-slide">
+          <img src="./endless.jpg" alt="Endless joy">
+          <div class="filmstrip-caption">Endless joy</div>
+        </div>
+        <div class="filmstrip-slide">
+          <img src="./together.jpg" alt="Together always">
+          <div class="filmstrip-caption">Together always</div>
+        </div>
+        <div class="filmstrip-slide">
+          <img src="./begins.jpg" alt="Forever begins here">
+          <div class="filmstrip-caption">Forever begins here</div>
+        </div>
+      </div>
+      <div class="filmstrip-dots" id="filmstripDots">
+        <div class="filmstrip-dot active"></div>
+        <div class="filmstrip-dot"></div>
+        <div class="filmstrip-dot"></div>
+        <div class="filmstrip-dot"></div>
+        <div class="filmstrip-dot"></div>
+      </div>
+      <p class="filmstrip-hint">← swipe →</p>
+    </div>
+  </section>
   <section id="details">
     <div class="details-wrapper">
       <div class="reveal">
@@ -1175,6 +1390,33 @@
     p.style.animationDuration = (12 + Math.random() * 14) + 's';
     p.style.animationDelay    = (Math.random() * 10) + 's';
     particleBg.appendChild(p);
+  }
+
+  // ══════════════════════════════════════════
+  //  MOBILE FILMSTRIP — active slide tracking
+  // ══════════════════════════════════════════
+  const filmstripTrack = document.getElementById('filmstripTrack');
+  const filmstripDots  = document.querySelectorAll('.filmstrip-dot');
+
+  if (filmstripTrack) {
+    const slides = filmstripTrack.querySelectorAll('.filmstrip-slide');
+
+    function updateActiveSlide() {
+      const trackRect  = filmstripTrack.getBoundingClientRect();
+      const centerX    = trackRect.left + trackRect.width / 2;
+      let closestIdx   = 0;
+      let closestDist  = Infinity;
+      slides.forEach((slide, i) => {
+        const rect = slide.getBoundingClientRect();
+        const dist = Math.abs(rect.left + rect.width / 2 - centerX);
+        if (dist < closestDist) { closestDist = dist; closestIdx = i; }
+      });
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === closestIdx));
+      filmstripDots.forEach((d, i) => d.classList.toggle('active', i === closestIdx));
+    }
+
+    updateActiveSlide();
+    filmstripTrack.addEventListener('scroll', updateActiveSlide, { passive: true });
   }
 </script>
 </body>
