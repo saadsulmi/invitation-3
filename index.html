@@ -20,7 +20,8 @@
     --text-light: #9C8660;
   }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: 0; }
+  * { scroll-margin-top: 0; }
 
   body {
     background: var(--cream);
@@ -633,13 +634,75 @@
     100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
   }
 
+  /* ── MUSIC BUTTON ── */
+  #musicBtn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    background: rgba(255,255,255,0.92);
+    color: var(--gold-deep);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.25);
+    backdrop-filter: blur(8px);
+    transition: background 0.3s, color 0.3s, transform 0.2s;
+  }
+  #musicBtn:hover { background: var(--gold); color: var(--white); transform: scale(1.08); }
+  #musicBtn.playing svg { animation: musicSpin 4s linear infinite; }
+  @keyframes musicSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* ── MOBILE RESPONSIVENESS ── */
   @media (max-width: 600px) {
-    .pf-1, .pf-2, .pf-3 { grid-column: span 12; height: 200px; }
-    .pf-4, .pf-5 { grid-column: span 12; height: 240px; }
-    .details-grid { grid-template-columns: 1fr; gap: 28px; }
+    section { padding: 60px 16px; min-height: auto; }
+
+    .cover-inner { padding: 32px 20px; min-height: 88vh; }
+    .cover-names { font-size: clamp(44px, 13vw, 64px); }
+    .cover-ampersand { font-size: clamp(30px, 10vw, 44px); }
+    .corner-ornament { width: 44px; height: 44px; }
+
+    .hero-card { padding: 36px 22px; width: min(100%, 96vw); }
+    .hero-date-block { gap: 0 12px; }
+    .hero-quote { font-size: 15px; }
+
+    .photos-grid { gap: 8px; }
+    .pf-1, .pf-2, .pf-3 { grid-column: span 12; height: 180px; }
+    .pf-4, .pf-5 { grid-column: span 12; height: 210px; }
+    .photo-caption { opacity: 1; font-size: 15px; }
+
+    .details-card { padding: 36px 20px; }
+    .details-grid { grid-template-columns: 1fr; gap: 24px; }
     .detail-vline { display: none; }
-    .hero-card, .details-card, .directions-card, .closing-card { padding: 40px 28px; }
-    .cover-inner { padding: 36px 24px; }
+    .details-wrapper { width: 100%; }
+
+    .directions-card { padding: 36px 20px; width: 100%; }
+    .dir-step { gap: 12px; }
+
+    .quotes-wrapper { width: 100%; }
+    .quote-carousel { min-height: 200px; }
+    .quote-text { font-size: 17px; }
+    .quote-mark { font-size: 60px; }
+
+    .closing-card { padding: 48px 24px; width: 100%; }
+    .closing-main { font-size: clamp(34px, 9vw, 48px); }
+
+    .section-title { font-size: clamp(38px, 10vw, 56px); }
+
+    #musicBtn { bottom: 16px; right: 16px; width: 40px; height: 40px; }
+
+    .ornament-line::before, .ornament-line::after { width: 40px; }
+  }
+
+  @media (max-width: 380px) {
+    .cover-inner { padding: 28px 16px; }
+    .hero-card { padding: 28px 16px; }
+    .details-card, .directions-card, .closing-card { padding: 28px 16px; }
   }
 </style>
 </head>
@@ -908,50 +971,170 @@
 </div>
 
 <script>
-  // ── Open invitation
-  const openBtn = document.getElementById('openBtn');
-  const cover = document.getElementById('cover');
+  // ══════════════════════════════════════════
+  //  MUSIC
+  // ══════════════════════════════════════════
+  const bgMusic = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+  bgMusic.loop = true;
+  bgMusic.volume = 0.35;
+  let musicPlaying = false;
+
+  // Floating music toggle button
+  const musicBtn = document.createElement('button');
+  musicBtn.id = 'musicBtn';
+  musicBtn.title = 'Toggle music';
+  musicBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>`;
+  document.body.appendChild(musicBtn);
+
+  function playMusic() {
+    bgMusic.play().then(() => {
+      musicPlaying = true;
+      musicBtn.classList.add('playing');
+    }).catch(() => {});
+  }
+
+  musicBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (musicPlaying) {
+      bgMusic.pause();
+      musicPlaying = false;
+      musicBtn.classList.remove('playing');
+    } else {
+      playMusic();
+    }
+  });
+
+  // ══════════════════════════════════════════
+  //  OPEN INVITATION — music + reveal
+  // ══════════════════════════════════════════
+  const openBtn    = document.getElementById('openBtn');
+  const cover      = document.getElementById('cover');
   const invitation = document.getElementById('invitation');
 
   openBtn.addEventListener('click', () => {
+    // 1. Start music immediately on this user gesture
+    playMusic();
+
+    // 2. Hide cover, show invitation
     cover.classList.add('hidden');
     invitation.classList.add('visible');
-    // Start auto-scroll after transition
-    setTimeout(() => autoScrollThrough(), 1200);
+
+    // 3. Begin cinematic scroll after cover fade-out (1.2 s CSS transition)
+    setTimeout(() => beginCinematicScroll(), 1300);
   });
 
-  // ── Auto-scroll
-  function autoScrollThrough() {
-    const sections = document.querySelectorAll('#invitation section');
-    let i = 0;
-    function scrollNext() {
-      if (i < sections.length) {
-        sections[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
-        i++;
-        // spacing between sections
-        const delay = i === 1 ? 2200 : 2600;
-        setTimeout(scrollNext, delay);
+  // ══════════════════════════════════════════
+  //  CINEMATIC SCROLL
+  //  — one continuous RAF loop that drifts
+  //    slowly through every section, pausing
+  //    briefly at each one before moving on.
+  //    No jumps, no teleports.
+  // ══════════════════════════════════════════
+  let rafId          = null;   // current animation frame
+  let scrollLocked   = false;  // true while auto-scroll owns the viewport
+  let userInteracted = false;  // set true the moment user touches/wheels/keys
+
+  // Listen for any real user intent to scroll → hand control back immediately
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(evt => {
+    window.addEventListener(evt, () => {
+      if (scrollLocked) {
+        userInteracted = true;
+        scrollLocked   = false;
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
       }
-    }
-    scrollNext();
+    }, { passive: true });
+  });
+
+  function easeInOutSine(t) {
+    return -(Math.cos(Math.PI * t) - 1) / 2;
   }
 
-  // ── Reveal on scroll
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
+  /**
+   * Smoothly scrolls from current position to `targetY` over `duration` ms.
+   * Returns a Promise that resolves when done (or rejects if interrupted).
+   */
+  function smoothScrollTo(targetY, duration) {
+    return new Promise((resolve, reject) => {
+      const startY    = window.scrollY;
+      const distance  = targetY - startY;
+      let   startTime = null;
+
+      function step(ts) {
+        if (userInteracted) { reject('interrupted'); return; }
+        if (!startTime) startTime = ts;
+
+        const elapsed  = ts - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        window.scrollTo(0, startY + distance * easeInOutSine(progress));
+
+        if (progress < 1) {
+          rafId = requestAnimationFrame(step);
+        } else {
+          rafId = null;
+          resolve();
+        }
+      }
+
+      rafId = requestAnimationFrame(step);
+    });
+  }
+
+  /** Wait `ms` milliseconds, but bail early if user interacts. */
+  function pause(ms) {
+    return new Promise((resolve, reject) => {
+      const tid = setTimeout(resolve, ms);
+      const check = setInterval(() => {
+        if (userInteracted) { clearTimeout(tid); clearInterval(check); reject('interrupted'); }
+      }, 50);
+      setTimeout(() => clearInterval(check), ms + 100);
+    });
+  }
+
+  async function beginCinematicScroll() {
+    const sections = Array.from(document.querySelectorAll('#invitation section'));
+    scrollLocked   = true;
+    userInteracted = false;
+
+    try {
+      for (let i = 0; i < sections.length; i++) {
+        if (userInteracted) break;
+
+        // Scroll to this section — 2 s travel time so it feels like a slow pan
+        const targetY = sections[i].getBoundingClientRect().top + window.scrollY;
+        await smoothScrollTo(targetY, 2000);
+
+        // Linger on each section before moving to the next
+        if (i < sections.length - 1) {
+          await pause(2600);
+        }
+      }
+    } catch (_) {
+      // User took over — perfectly fine, do nothing
+    } finally {
+      scrollLocked = false;
+    }
+  }
+
+  // ══════════════════════════════════════════
+  //  REVEAL ON SCROLL
+  // ══════════════════════════════════════════
+  const reveals  = document.querySelectorAll('.reveal');
+  const revealOb = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
         e.target.classList.add('visible');
-        observer.unobserve(e.target);
+        revealOb.unobserve(e.target);
       }
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-  reveals.forEach(r => observer.observe(r));
+  }, { threshold: 0.10, rootMargin: '0px 0px -30px 0px' });
+  reveals.forEach(r => revealOb.observe(r));
 
-  // ── Quote carousel
-  const quoteItems = document.querySelectorAll('.quote-item');
-  const dots = document.querySelectorAll('.qdot');
-  let currentQuote = 0;
+  // ══════════════════════════════════════════
+  //  QUOTE CAROUSEL
+  // ══════════════════════════════════════════
+  const quoteItems   = document.querySelectorAll('.quote-item');
+  const dots         = document.querySelectorAll('.qdot');
+  let   currentQuote = 0;
 
   function goToQuote(n) {
     quoteItems[currentQuote].classList.remove('active');
@@ -961,23 +1144,36 @@
     dots[currentQuote].classList.add('active');
   }
 
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => goToQuote(parseInt(dot.dataset.i)));
-  });
+  dots.forEach(dot => dot.addEventListener('click', () => goToQuote(+dot.dataset.i)));
 
-  setInterval(() => {
-    goToQuote((currentQuote + 1) % quoteItems.length);
-  }, 4500);
+  // Touch swipe on carousel
+  let swipeStartX = 0;
+  const carousel  = document.querySelector('.quote-carousel');
+  if (carousel) {
+    carousel.addEventListener('touchstart', e => { swipeStartX = e.touches[0].clientX; }, { passive: true });
+    carousel.addEventListener('touchend',   e => {
+      const diff = swipeStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) {
+        goToQuote(diff > 0
+          ? (currentQuote + 1) % quoteItems.length
+          : (currentQuote - 1 + quoteItems.length) % quoteItems.length);
+      }
+    }, { passive: true });
+  }
 
-  // ── Particles
+  setInterval(() => goToQuote((currentQuote + 1) % quoteItems.length), 4500);
+
+  // ══════════════════════════════════════════
+  //  PARTICLES
+  // ══════════════════════════════════════════
   const particleBg = document.getElementById('particleBg');
   for (let i = 0; i < 18; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
-    p.style.left = Math.random() * 100 + '%';
+    p.style.left              = Math.random() * 100 + '%';
     p.style.width = p.style.height = (1 + Math.random() * 2.5) + 'px';
     p.style.animationDuration = (12 + Math.random() * 14) + 's';
-    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.animationDelay    = (Math.random() * 10) + 's';
     particleBg.appendChild(p);
   }
 </script>
